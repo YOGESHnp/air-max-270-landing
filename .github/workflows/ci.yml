@@ -67,6 +67,6 @@ jobs:
           docker push $ECR_URI:$IMAGE_TAG
           docker push $ECR_URI:latest
 
-      # Save image reference for later jobs
+      # Save image reference for later jobs schedule
       - name: Set image env variable
         run: echo "IMAGE=$ECR_URI:$IMAGE_TAG" >> $GITHUB_ENV
