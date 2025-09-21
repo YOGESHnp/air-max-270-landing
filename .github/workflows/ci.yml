@@ -38,6 +38,9 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Debug resolved ARN
+        run: echo "Resolved ARN: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/air-max-270-github-actions-dev"
+
       # Configure AWS credentials (OIDC)
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
