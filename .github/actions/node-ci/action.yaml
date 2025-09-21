@@ -16,7 +16,12 @@ runs:
         cache: "npm"
 
     - run: npm ci
+      shell: bash
+
     - run: npm test -- --ci --watchAll=false
+      shell: bash
       env:
         CI: true
+
     - run: npm run lint
+      shell: bash
