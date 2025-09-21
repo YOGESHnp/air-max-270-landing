@@ -21,8 +21,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.16.0'
-          cache: 'npm'
+          node-version: "20.16.0"
+          cache: "npm"
 
       # Install dependencies
       - name: Install dependencies
@@ -70,3 +70,33 @@ jobs:
       # Save image reference for later jobs schedule
       - name: Set image env variable
         run: echo "IMAGE=$ECR_URI:$IMAGE_TAG" >> $GITHUB_ENV
+
+      # ---------- CD: bump image tag in GitOps repo (dev overlay) ----------
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v4
+        with:
+          repository: YOGESHnp/air-max-270-gitops
+          token: ${{ secrets.GH_PAT }}
+          path: gitops
+
+      - name: Install yq
+        run: |
+          sudo curl -L https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64 -o /usr/local/bin/yq && sudo chmod +x /usr/local/bin/yq
+
+      - name: Update dev image tag (to sha tag)
+        working-directory: gitops/apps/react-app/overlays/dev
+        env:
+          ECR_REPO: 376129860198.dkr.ecr.us-east-1.amazonaws.com/air-max-270/landing-dev
+          IMAGE_SHA_TAG: sha-${{ github.sha }}
+        run: |
+          # 'public.ecr.aws/nginx/nginx' must match the name in your overlay's images: block
+          kustomize edit set image public.ecr.aws/nginx/nginx=${ECR_REPO}:${IMAGE_SHA_TAG}
+
+      - name: Commit & push
+        working-directory: gitops
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add apps/react-app/overlays/dev/kustomization.yaml
+          git commit -m "chore(deploy): dev -> ${ECR_REPO}:${IMAGE_SHA_TAG}" || echo "No changes"
+          git push origin main
