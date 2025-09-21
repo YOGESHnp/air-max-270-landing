@@ -20,26 +20,47 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      # Setup Node.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # - name: Node CI
+      #   description: Setup Node.js, install deps, run tests and lint
+      #   runs:
+      #     using: "composite"
+      #     steps:
+      #       - uses: actions/setup-node@v4
+      #         with:
+      #           node-version: "20.16.0"
+      #           cache: "npm"
+
+      #       - run: npm ci
+      #       - run: npm test -- --ci --watchAll=false
+      #         env:
+      #           CI: true
+      #       - run: npm run lint
+
+      - name: Node CI
+        uses: ./.github/actions/node-ci
         with:
           node-version: "20.16.0"
-          cache: "npm"
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm ci
+      # # Setup Node.js
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: "20.16.0"
+      #     cache: "npm"
 
-      # Run unit tests (Jest)
-      - name: Run Jest tests
-        run: npm test -- --ci --watchAll=false
-        env:
-          CI: true
+      # # Install dependencies
+      # - name: Install dependencies
+      #   run: npm ci
 
-      # Run lint checks
-      - name: Run lint
-        run: npm run lint
+      # # Run unit tests (Jest)
+      # - name: Run Jest tests
+      #   run: npm test -- --ci --watchAll=false
+      #   env:
+      #     CI: true
+
+      # # Run lint checks
+      # - name: Run lint
+      #   run: npm run lint
 
       # Debug ARN
       - name: Debug resolved ARN
