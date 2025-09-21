@@ -38,6 +38,7 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      # Debug ARN
       - name: Debug resolved ARN
         run: echo "Resolved ARN: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/air-max-270-github-actions-dev"
 
